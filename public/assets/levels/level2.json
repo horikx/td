@@ -1,0 +1,411 @@
+{
+    "id": "level_02",
+    "nextLevel": "level3",
+    "name": "Twisted Canyon",
+    "baseHealth": 100,
+    "hexSize": 25,
+    "availableTowers": [
+        "basic",
+        "sniper",
+        "mortar",
+        "ice"
+    ],
+    "waves": [
+        {
+            "name": "Wave 1",
+            "enemies": [
+                {
+                    "type": "basic",
+                    "count": 8,
+                    "interval": 1200
+                }
+            ]
+        },
+        {
+            "name": "Wave 2",
+            "enemies": [
+                {
+                    "type": "fast",
+                    "count": 10,
+                    "interval": 800
+                }
+            ]
+        },
+        {
+            "name": "Wave 3",
+            "enemies": [
+                {
+                    "type": "basic",
+                    "count": 5,
+                    "interval": 1000
+                },
+                {
+                    "type": "fast",
+                    "count": 8,
+                    "interval": 600
+                }
+            ]
+        },
+        {
+            "name": "Wave 4",
+            "enemies": [
+                {
+                    "type": "tank",
+                    "count": 2,
+                    "interval": 3000
+                },
+                {
+                    "type": "fast",
+                    "count": 15,
+                    "interval": 400
+                }
+            ]
+        }
+    ],
+    "endpoints": {
+        "start": {
+            "q": 0,
+            "r": 3
+        },
+        "end": {
+            "q": 14,
+            "r": 8
+        }
+    },
+    "paths": [
+        [
+            {
+                "q": 0,
+                "r": 3
+            },
+            {
+                "q": 1,
+                "r": 3
+            },
+            {
+                "q": 2,
+                "r": 3
+            },
+            {
+                "q": 3,
+                "r": 4
+            },
+            {
+                "q": 4,
+                "r": 4
+            },
+            {
+                "q": 5,
+                "r": 5
+            },
+            {
+                "q": 5,
+                "r": 6
+            },
+            {
+                "q": 5,
+                "r": 7
+            },
+            {
+                "q": 6,
+                "r": 7
+            },
+            {
+                "q": 7,
+                "r": 7
+            },
+            {
+                "q": 8,
+                "r": 6
+            },
+            {
+                "q": 9,
+                "r": 6
+            },
+            {
+                "q": 10,
+                "r": 6
+            },
+            {
+                "q": 11,
+                "r": 7
+            },
+            {
+                "q": 12,
+                "r": 7
+            },
+            {
+                "q": 13,
+                "r": 8
+            },
+            {
+                "q": 14,
+                "r": 8
+            }
+        ]
+    ],
+    "obstacles": [
+        {
+            "q": 2,
+            "r": 4,
+            "type": "rock"
+        },
+        {
+            "q": 4,
+            "r": 5,
+            "type": "tree"
+        },
+        {
+            "q": 6,
+            "r": 6,
+            "type": "rock"
+        },
+        {
+            "q": 8,
+            "r": 7,
+            "type": "tree"
+        },
+        {
+            "q": 10,
+            "r": 7,
+            "type": "rock"
+        },
+        {
+            "q": 12,
+            "r": 8,
+            "type": "tree"
+        }
+    ],
+    "tiles": [
+        {
+            "q": 0,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 1,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 0,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 1,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 1,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 7,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 8,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 9,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 10,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 7,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 8,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 9,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 10,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 11,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 12,
+            "r": 7,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 7,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 8,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 9,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 10,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 11,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 12,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 13,
+            "r": 8,
+            "type": "grass"
+        },
+        {
+            "q": 14,
+            "r": 8,
+            "type": "grass"
+        }
+    ]
+}

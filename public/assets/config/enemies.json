@@ -1,0 +1,34 @@
+{
+    "basic": {
+        "speed": 50,
+        "health": 40,
+        "color": "0x0000ff",
+        "size": 10,
+        "shape": "circle",
+        "bounty": 10
+    },
+    "fast": {
+        "speed": 100,
+        "health": 10,
+        "color": "0xff00ff",
+        "size": 8,
+        "shape": "circle",
+        "bounty": 15
+    },
+    "tank": {
+        "speed": 25,
+        "health": 100,
+        "color": "0xff0000",
+        "size": 15,
+        "shape": "circle",
+        "bounty": 30
+    },
+    "boss": {
+        "speed": 15,
+        "health": 500,
+        "color": "0x000000",
+        "size": 20,
+        "shape": "circle",
+        "bounty": 100
+    }
+}

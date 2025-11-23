@@ -1,0 +1,107 @@
+{
+    "basic": {
+        "name": "Pea Shooter",
+        "cost": 50,
+        "range": 150,
+        "damage": 10,
+        "fireRate": 1000,
+        "color": "0x888888",
+        "type": {
+            "style": "single"
+        },
+        "upgrades": [
+            {
+                "cost": 40,
+                "damage": 15,
+                "range": 180,
+                "fireRate": 900
+            },
+            {
+                "cost": 80,
+                "damage": 22,
+                "range": 216,
+                "fireRate": 810
+            }
+        ]
+    },
+    "sniper": {
+        "name": "Long Shot",
+        "cost": 150,
+        "range": 300,
+        "damage": 50,
+        "fireRate": 3000,
+        "color": "0x444444",
+        "type": {
+            "style": "single"
+        },
+        "upgrades": [
+            {
+                "cost": 120,
+                "damage": 75,
+                "range": 360,
+                "fireRate": 2700
+            },
+            {
+                "cost": 240,
+                "damage": 112,
+                "range": 432,
+                "fireRate": 2430
+            }
+        ]
+    },
+    "mortar": {
+        "name": "Big Boom",
+        "cost": 250,
+        "range": 200,
+        "damage": 30,
+        "fireRate": 2000,
+        "color": "0x222222",
+        "type": {
+            "style": "splash",
+            "radius": 60,
+            "falloff": "linear"
+        },
+        "upgrades": [
+            {
+                "cost": 200,
+                "damage": 45,
+                "range": 240,
+                "fireRate": 1800
+            },
+            {
+                "cost": 400,
+                "damage": 67,
+                "range": 288,
+                "fireRate": 1620
+            }
+        ]
+    },
+    "ice": {
+        "name": "Freezer",
+        "cost": 100,
+        "range": 100,
+        "damage": 5,
+        "fireRate": 1500,
+        "color": "0xaaaaff",
+        "type": {
+            "style": "debuff",
+            "effect": "slow",
+            "duration": 2000,
+            "potency": 0.5
+        },
+        "upgrades": [
+            {
+                "cost": 80,
+                "damage": 7,
+                "range": 120,
+                "fireRate": 1350
+            },
+            {
+                "cost": 160,
+                "damage": 10,
+                "range": 144,
+                "fireRate": 1215
+            }
+        ]
+    }
+}

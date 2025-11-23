@@ -1,0 +1,289 @@
+{
+    "id": "level_01",
+    "nextLevel": "level2",
+    "name": "Unicorn Island",
+    "baseHealth": 100,
+    "hexSize": 25,
+    "availableTowers": [
+        "basic",
+        "sniper",
+        "mortar",
+        "ice"
+    ],
+    "waves": [
+        {
+            "name": "Wave 1",
+            "enemies": [
+                {
+                    "type": "basic",
+                    "count": 5,
+                    "interval": 1500
+                }
+            ]
+        },
+        {
+            "name": "Wave 2",
+            "enemies": [
+                {
+                    "type": "basic",
+                    "count": 3,
+                    "interval": 1000
+                },
+                {
+                    "type": "fast",
+                    "count": 5,
+                    "interval": 800
+                }
+            ]
+        },
+        {
+            "name": "Wave 3",
+            "enemies": [
+                {
+                    "type": "tank",
+                    "count": 3,
+                    "interval": 2000
+                },
+                {
+                    "type": "fast",
+                    "count": 10,
+                    "interval": 500
+                }
+            ]
+        }
+    ],
+    "endpoints": {
+        "start": {
+            "q": 1,
+            "r": 2
+        },
+        "end": {
+            "q": 12,
+            "r": 6
+        }
+    },
+    "paths": [
+        [
+            {
+                "q": 1,
+                "r": 2
+            },
+            {
+                "q": 2,
+                "r": 2
+            },
+            {
+                "q": 3,
+                "r": 2
+            },
+            {
+                "q": 3,
+                "r": 3
+            },
+            {
+                "q": 3,
+                "r": 4
+            },
+            {
+                "q": 4,
+                "r": 5
+            },
+            {
+                "q": 5,
+                "r": 5
+            },
+            {
+                "q": 6,
+                "r": 5
+            },
+            {
+                "q": 7,
+                "r": 5
+            },
+            {
+                "q": 8,
+                "r": 5
+            },
+            {
+                "q": 9,
+                "r": 5
+            },
+            {
+                "q": 10,
+                "r": 6
+            },
+            {
+                "q": 11,
+                "r": 6
+            },
+            {
+                "q": 12,
+                "r": 6
+            }
+        ]
+    ],
+    "obstacles": [
+        {
+            "q": 3,
+            "r": 1,
+            "type": "rock"
+        },
+        {
+            "q": 4,
+            "r": 2,
+            "type": "tree"
+        },
+        {
+            "q": 8,
+            "r": 4,
+            "type": "rock"
+        },
+        {
+            "q": 8,
+            "r": 6,
+            "type": "tree"
+        }
+    ],
+    "tiles": [
+        {
+            "q": 0,
+            "r": 2,
+            "type": "water"
+        },
+        {
+            "q": 1,
+            "r": 2,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 2,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 2,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 2,
+            "type": "grass"
+        },
+        {
+            "q": 0,
+            "r": 3,
+            "type": "water"
+        },
+        {
+            "q": 1,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 3,
+            "type": "grass"
+        },
+        {
+            "q": 1,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 4,
+            "type": "grass"
+        },
+        {
+            "q": 2,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 7,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 8,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 9,
+            "r": 5,
+            "type": "grass"
+        },
+        {
+            "q": 3,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 4,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 5,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 6,
+            "r": 6,
+            "type": "grass"
+        },
+        {
+            "q": 8,
+            "r": 8,
+            "type": "water"
+        }
+    ]
+}
