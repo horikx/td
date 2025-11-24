@@ -124,14 +124,27 @@ export default class BuilderScene extends Phaser.Scene {
         this.healthInput = this.createInput(settingsContent, 'Base Health', 'number', this.levelData.baseHealth, (v) => this.levelData.baseHealth = parseInt(v));
         this.moneyInput = this.createInput(settingsContent, 'Starting Money', 'number', this.levelData.startingMoney, (v) => this.levelData.startingMoney = parseInt(v));
 
+        // Save to Server Button
+        const saveBtn = document.createElement('button');
+        saveBtn.innerText = 'Save Level to Server';
+        saveBtn.style.width = '100%';
+        saveBtn.style.marginTop = '10px';
+        saveBtn.style.padding = '10px';
+        saveBtn.style.cursor = 'pointer';
+        saveBtn.style.backgroundColor = '#4a4';
+        saveBtn.style.color = '#fff';
+        saveBtn.onclick = () => this.saveLevelToServer();
+        sidebar.appendChild(saveBtn);
+
         // Export Button (Global)
         const exportBtn = document.createElement('button');
         exportBtn.innerText = 'Export All Levels (JSON)';
         exportBtn.style.width = '100%';
-        exportBtn.style.marginTop = '20px';
+        exportBtn.style.marginTop = '10px';
         exportBtn.style.padding = '10px';
         exportBtn.style.cursor = 'pointer';
         exportBtn.onclick = () => this.exportAllLevels();
+        sidebar.appendChild(exportBtn);
         sidebar.appendChild(exportBtn);
 
         document.body.appendChild(sidebar);
@@ -268,6 +281,44 @@ export default class BuilderScene extends Phaser.Scene {
         this.loadedLevels[newKey] = newLevel;
         this.campaignLevels.push(newKey);
         this.selectLevel(newKey);
+    }
+
+    async saveLevelToServer() {
+        if (!this.currentLevelKey || !this.levelData) return;
+
+        // Ensure nextLevel logic is applied before saving (optional, but good for consistency)
+        const index = this.campaignLevels.indexOf(this.currentLevelKey);
+        if (index !== -1 && index < this.campaignLevels.length - 1) {
+            this.levelData.nextLevel = this.campaignLevels[index + 1];
+        } else {
+            delete this.levelData.nextLevel;
+        }
+
+        const filename = `${this.currentLevelKey}.json`;
+        console.log(`Saving ${filename} to server...`);
+
+        try {
+            const response = await fetch('/api/save-level', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    filename: filename,
+                    data: this.levelData
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(`Saved ${filename} successfully!`);
+            } else {
+                alert(`Error saving: ${result.error}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Failed to connect to server. Is it running?');
+        }
     }
 
     exportAllLevels() {
@@ -445,6 +496,18 @@ export default class BuilderScene extends Phaser.Scene {
             // Phaser pointer.x is relative to canvas 0,0.
 
             const hex = this.hexGrid.pixelToHex(pointer.x, pointer.y);
+
+            // Check bounds (prevent selecting hexes near/off edges)
+            const pixel = this.hexGrid.hexToPixel(hex.q, hex.r);
+            const padding = this.hexGrid.hexSize;
+            const width = this.scale.width;
+            const height = this.scale.height;
+
+            if (pixel.x < padding || pixel.x > width - padding || pixel.y < padding || pixel.y > height - padding) {
+                console.log('Hex out of bounds');
+                return;
+            }
+
             // Use pageX/Y for DOM element positioning to match mouse exactly
             this.showContextMenu(pointer.event.pageX, pointer.event.pageY, hex);
         });

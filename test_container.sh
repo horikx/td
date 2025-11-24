@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "Building Docker image..."
+docker build -t unicorn-td:latest .
+
+echo "Running container..."
+# Use a local directory for the volume to test persistence
+mkdir -p ./test_levels
+docker run -it --rm \
+  -p 3000:3000 \
+  -v $(pwd)/test_levels:/app/public/assets/levels \
+  -e REPO_URL=https://github.com/horikx/unicorn-tower-defence.git \
+  unicorn-td:latest

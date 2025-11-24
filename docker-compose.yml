@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  unicorn-td:
+    build: .
+    image: unicorn-td:latest
+    container_name: unicorn-td
+    ports:
+      - "3000:3000"
+    volumes:
+      - unicorn-levels:/app/public/assets/levels
+    environment:
+      - REPO_URL=https://github.com/horikx/unicorn-tower-defence.git
+    restart: unless-stopped
+
+volumes:
+  unicorn-levels:
