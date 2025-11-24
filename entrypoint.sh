@@ -16,7 +16,7 @@ if [ ! -f "/app/package.json" ]; then
   # Copy files to /app (overwriting existing)
   cp -rf /tmp/repo/* /app/
   # Attempt to copy hidden files (like .gitignore), ignore error if none match
-#   cp -rf /tmp/repo/.[!.]* /app/ 2>/dev/null || true
+  cp -rf /tmp/repo/.[!.]* /app/ 2>/dev/null || true
 
   # Clean up
   rm -rf /tmp/repo
@@ -27,8 +27,6 @@ else
   echo "App files already present (local development mode), skipping clone."
 fi
 
-echo "Contents of /app:"
-ls -la /app
 
 echo "Installing dependencies..."
 npm install
