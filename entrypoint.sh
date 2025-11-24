@@ -6,17 +6,19 @@ REPO_URL="${REPO_URL:-https://github.com/horikx/unicorn-tower-defence.git}"
 echo "Starting Unicorn Tower Defence Container..."
 echo "Repo: $REPO_URL"
 
-# Check if we are in a git repo
-if [ -d ".git" ]; then
-    echo "Pulling latest changes..."
-    git pull
-else
-    echo "Cloning repository..."
-    # Clone into current directory (must be empty or contain only non-conflicting files)
-    # Since WORKDIR is /app, and we might have mounted volumes, we need to be careful.
-    # If /app is empty, git clone . works.
-    git clone "$REPO_URL" .
-fi
+# Clone to a temporary directory to avoid "directory not empty" errors with volumes
+echo "Cloning repository to /tmp/repo..."
+rm -rf /tmp/repo
+git clone "$REPO_URL" /tmp/repo
+
+echo "Updating application files..."
+# Copy files to /app (overwriting existing)
+cp -rf /tmp/repo/* /app/
+# Attempt to copy hidden files (like .gitignore), ignore error if none match
+cp -rf /tmp/repo/.[!.]* /app/ 2>/dev/null || true
+
+# Clean up
+rm -rf /tmp/repo
 
 echo "Installing dependencies..."
 npm install
