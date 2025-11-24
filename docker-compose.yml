@@ -1,4 +1,4 @@
-version: '3'
+
 
 services:
   unicorn-td:
@@ -10,7 +10,7 @@ services:
     volumes:
       - unicorn-levels:/app/public/assets/levels
     environment:
-      - REPO_URL=https://github.com/horikx/unicorn-tower-defence.git
+      - REPO_URL=https://github.com/horikx/td.git
     restart: unless-stopped
 
 volumes:

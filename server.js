@@ -52,8 +52,8 @@ app.use('/assets/levels', express.static(levelsPath));
 app.use(express.static(distPath));
 
 // Fallback for SPA routing (if needed, though Phaser is mostly single page)
-app.get('*', (req, res) => {
-    if (req.accepts('html')) {
+app.use((req, res) => {
+    if (req.method === 'GET' && req.accepts('html')) {
         res.sendFile(path.join(distPath, 'index.html'));
     } else {
         res.status(404).end();
@@ -63,4 +63,12 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Serving levels from: ${levelsPath}`);
+
+    // Debug: List files in levels directory
+    try {
+        const files = fs.readdirSync(levelsPath);
+        console.log('Levels found:', files);
+    } catch (e) {
+        console.log('Could not list levels directory:', e.message);
+    }
 });
