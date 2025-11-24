@@ -56,6 +56,7 @@ app.use((req, res) => {
     if (req.method === 'GET' && req.accepts('html')) {
         res.sendFile(path.join(distPath, 'index.html'));
     } else {
+        console.error('Serving up a 404 page')
         res.status(404).end();
     }
 });
