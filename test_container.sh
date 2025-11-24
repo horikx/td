@@ -9,5 +9,5 @@ mkdir -p ./test_levels
 docker run -it --rm \
   -p 3000:3000 \
   -v $(pwd)/test_levels:/app/public/assets/levels \
-  -e REPO_URL=https://github.com/horikx/unicorn-tower-defence.git \
+  -e REPO_URL=https://github.com/horikx/td.git \
   unicorn-td:latest
