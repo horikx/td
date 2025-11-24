@@ -3,6 +3,7 @@ services:
     build: .
     image: unicorn-td:latest
     container_name: unicorn-td
+    network_mode: nnnn
     ports:
       - "3000:3000"
     volumes:
