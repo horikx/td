@@ -1,15 +1,21 @@
 FROM node:20-alpine
 
-# Install git for pulling updates
-RUN apk add --no-cache git
-
 WORKDIR /app
 
-# Copy entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application files
+COPY . .
+
+# Build application
+RUN npm run build
 
 # Expose port
 EXPOSE 3000
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# Start server
+CMD ["node", "server.js"]

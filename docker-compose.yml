@@ -3,13 +3,10 @@ services:
     build: .
     image: unicorn-td:latest
     container_name: unicorn-td
-    network_mode: nnnn
     ports:
       - "3000:3000"
     volumes:
       - unicorn-levels:/app/public/assets/levels
-    environment:
-      - REPO_URL=https://github.com/horikx/td.git
     restart: unless-stopped
 
 volumes:
