@@ -3,9 +3,9 @@ services:
     build: .
     image: unicorn-td:latest
     container_name: unicorn-td
-    network_mode: nnnn
+    network_mode: bridge
     ports:
-      - "3000:3000"
+      - "3005:3005"
     volumes:
       - unicorn-levels:/app/public/assets/levels
     restart: unless-stopped
