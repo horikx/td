@@ -17,6 +17,7 @@ export default class HexGrid {
         this.drawObstacles();
         this.drawEndpoints();
         this.drawEnemies(); // Placeholder
+        this.drawSelection();
     }
 
     hexToPixel(q, r) {
@@ -111,7 +112,11 @@ export default class HexGrid {
         this.levelData.obstacles.forEach(obs => {
             const pos = this.hexToPixel(obs.q, obs.r);
             // Draw a different color or shape
-            this.drawHex(graphics, pos.x, pos.y, 0x555555); // Grey for rock
+            let color = 0x555555; // Default Grey (Rock)
+            if (obs.type === 'tree') {
+                color = 0x228b22; // Forest Green
+            }
+            this.drawHex(graphics, pos.x, pos.y, color);
         });
     }
 
@@ -130,10 +135,65 @@ export default class HexGrid {
         // End (Red circle)
         graphics.fillStyle(0xff0000, 1);
         graphics.fillCircle(endPos.x, endPos.y, 15);
+
+        // Waypoints (Blue circle with number)
+        if (this.levelData.waypoints) {
+            // Clear existing waypoint texts
+            if (this.waypointTexts) {
+                this.waypointTexts.forEach(text => text.destroy());
+            }
+            this.waypointTexts = [];
+
+            graphics.fillStyle(0x0000ff, 1);
+            this.levelData.waypoints.forEach((wp, index) => {
+                const pos = this.hexToPixel(wp.q, wp.r);
+
+                // Draw circle background
+                graphics.fillCircle(pos.x, pos.y, 12);
+
+                // Draw number
+                const text = this.scene.add.text(pos.x, pos.y, (index + 1).toString(), {
+                    fontFamily: 'Arial',
+                    fontSize: '14px',
+                    color: '#ffffff',
+                    fontStyle: 'bold'
+                }).setOrigin(0.5);
+
+                this.waypointTexts.push(text);
+            });
+        }
     }
 
     drawEnemies() {
         // Placeholder removed, actual enemies spawned in GameScene
+    }
+
+    drawSelection() {
+        if (!this.scene.selectedHexes || this.scene.selectedHexes.size === 0) return;
+
+        const graphics = this.scene.add.graphics();
+        // Cyan outline
+
+        this.scene.selectedHexes.forEach(key => {
+            const [q, r] = key.split(',').map(Number);
+            const pos = this.hexToPixel(q, r);
+            this.drawHexOutline(graphics, pos.x, pos.y, 0x00FFFF);
+        });
+    }
+
+    drawHexOutline(graphics, x, y, color) {
+        graphics.lineStyle(4, color, 1);
+
+        const points = [];
+        for (let i = 0; i < 6; i++) {
+            const angle_deg = 60 * i - 30;
+            const angle_rad = Math.PI / 180 * angle_deg;
+            points.push({
+                x: x + this.hexSize * Math.cos(angle_rad),
+                y: y + this.hexSize * Math.sin(angle_rad)
+            });
+        }
+        graphics.strokePoints(points, true);
     }
 
     getPixelPath() {

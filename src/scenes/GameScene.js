@@ -502,7 +502,8 @@ export default class GameScene extends Phaser.Scene {
 
         const enemy = new Enemy(this, startNode.x, startNode.y, this.pixelPath, stats,
             () => {
-                this.gameManager.takeDamage(1); // Deduct 1 life
+                const damage = stats.damage || 1; // Default to 1 if not set
+                this.gameManager.takeDamage(damage);
             },
             (bounty) => {
                 this.gameManager.addMoney(bounty); // Add money

@@ -5,7 +5,8 @@
         "color": "0x0000ff",
         "size": 10,
         "shape": "circle",
-        "bounty": 10
+        "bounty": 10,
+        "damage": 5
     },
     "fast": {
         "speed": 100,
@@ -13,7 +14,8 @@
         "color": "0xff00ff",
         "size": 8,
         "shape": "circle",
-        "bounty": 15
+        "bounty": 15,
+        "damage": 1
     },
     "tank": {
         "speed": 25,
@@ -21,7 +23,8 @@
         "color": "0xff0000",
         "size": 15,
         "shape": "circle",
-        "bounty": 30
+        "bounty": 30,
+        "damage": 20
     },
     "boss": {
         "speed": 15,
@@ -29,6 +32,7 @@
         "color": "0x000000",
         "size": 20,
         "shape": "circle",
-        "bounty": 100
+        "bounty": 100,
+        "damage": 50
     }
 }

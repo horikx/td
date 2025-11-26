@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import HexGrid from '../game/HexGrid';
+import LevelBalancer from '../game/LevelBalancer';
 
 export default class BuilderScene extends Phaser.Scene {
     constructor() {
@@ -25,6 +26,9 @@ export default class BuilderScene extends Phaser.Scene {
             const data = this.cache.json.get(key);
             if (data) {
                 this.loadedLevels[key] = JSON.parse(JSON.stringify(data));
+                if (!this.loadedLevels[key].waypoints) {
+                    this.loadedLevels[key].waypoints = [];
+                }
             }
         });
 
@@ -33,6 +37,9 @@ export default class BuilderScene extends Phaser.Scene {
         this.levelData = this.loadedLevels[this.currentLevelKey];
 
         this.hexGrid = new HexGrid(this, this.levelData);
+        this.selectedHexes = new Set(); // Stores "q,r" strings
+        this.isDragging = false;
+        this.dragMode = 'select'; // 'select' or 'pan' (if we add panning later)
         this.hexGrid.draw();
 
         this.createSidebar();
@@ -134,7 +141,29 @@ export default class BuilderScene extends Phaser.Scene {
         saveBtn.style.backgroundColor = '#4a4';
         saveBtn.style.color = '#fff';
         saveBtn.onclick = () => this.saveLevelToServer();
+        saveBtn.onclick = () => this.saveLevelToServer();
         sidebar.appendChild(saveBtn);
+
+        // Analyze Button
+        const analyzeBtn = document.createElement('button');
+        analyzeBtn.innerText = 'Analyze Difficulty';
+        analyzeBtn.style.width = '100%';
+        analyzeBtn.style.marginTop = '10px';
+        analyzeBtn.style.padding = '10px';
+        analyzeBtn.style.cursor = 'pointer';
+        analyzeBtn.style.backgroundColor = '#44a';
+        analyzeBtn.style.color = '#fff';
+        analyzeBtn.onclick = () => this.analyzeLevel();
+        sidebar.appendChild(analyzeBtn);
+
+        // Analysis Result Container
+        this.analysisResult = document.createElement('div');
+        this.analysisResult.style.marginTop = '10px';
+        this.analysisResult.style.padding = '5px';
+        this.analysisResult.style.backgroundColor = '#222';
+        this.analysisResult.style.fontSize = '12px';
+        this.analysisResult.style.display = 'none';
+        sidebar.appendChild(this.analysisResult);
 
         // Export Button (Global)
         const exportBtn = document.createElement('button');
@@ -488,35 +517,53 @@ export default class BuilderScene extends Phaser.Scene {
     }
 
     createInputHandlers() {
-        // Context Menu
         this.input.on('pointerdown', (pointer) => {
-            // Ignore clicks if they are effectively on the sidebar (though sidebar stops propagation usually, 
-            // but since we shifted the canvas, pointer.x is relative to canvas).
-            // Actually, since we shifted the div, the canvas 0,0 is at screen 250,0.
-            // Phaser pointer.x is relative to canvas 0,0.
-
+            // Left click: Start selection/drag
+            this.isDragging = true;
             const hex = this.hexGrid.pixelToHex(pointer.x, pointer.y);
 
-            // Check bounds (prevent selecting hexes near/off edges)
-            const pixel = this.hexGrid.hexToPixel(hex.q, hex.r);
-            const padding = this.hexGrid.hexSize;
-            const width = this.scale.width;
-            const height = this.scale.height;
-
-            if (pixel.x < padding || pixel.x > width - padding || pixel.y < padding || pixel.y > height - padding) {
-                console.log('Hex out of bounds');
-                return;
+            if (this.isHexInBounds(hex)) {
+                if (!pointer.event.shiftKey) {
+                    this.selectedHexes.clear();
+                }
+                this.selectedHexes.add(`${hex.q},${hex.r}`);
+                this.hexGrid.draw();
             }
+        });
 
-            // Use pageX/Y for DOM element positioning to match mouse exactly
-            this.showContextMenu(pointer.event.pageX, pointer.event.pageY, hex);
+        this.input.on('pointermove', (pointer) => {
+            if (this.isDragging) {
+                const hex = this.hexGrid.pixelToHex(pointer.x, pointer.y);
+                if (this.isHexInBounds(hex)) {
+                    this.selectedHexes.add(`${hex.q},${hex.r}`);
+                    this.hexGrid.draw();
+                }
+            }
+        });
+
+        this.input.on('pointerup', (pointer) => {
+            this.isDragging = false;
+            // Show menu on mouse up if we have a selection
+            if (this.selectedHexes.size > 0) {
+                this.showContextMenu(pointer.event.pageX, pointer.event.pageY);
+            }
         });
     }
 
-    showContextMenu(x, y, hex) {
+    isHexInBounds(hex) {
+        const pixel = this.hexGrid.hexToPixel(hex.q, hex.r);
+        const padding = this.hexGrid.hexSize;
+        const width = this.scale.width;
+        const height = this.scale.height;
+        return !(pixel.x < padding || pixel.x > width - padding || pixel.y < padding || pixel.y > height - padding);
+    }
+
+    showContextMenu(x, y) {
         // Remove existing context menu
         const existing = document.getElementById('context-menu');
         if (existing) document.body.removeChild(existing);
+
+        if (this.selectedHexes.size === 0) return;
 
         const menu = document.createElement('div');
         menu.id = 'context-menu';
@@ -529,19 +576,22 @@ export default class BuilderScene extends Phaser.Scene {
         menu.style.zIndex = '1000';
         menu.style.color = '#000';
 
-        const coords = document.createElement('div');
-        coords.innerText = `Hex: (${hex.q}, ${hex.r})`;
-        coords.style.fontWeight = 'bold';
-        coords.style.marginBottom = '5px';
-        menu.appendChild(coords);
+        const info = document.createElement('div');
+        info.innerText = `Selected: ${this.selectedHexes.size} hexes`;
+        info.style.fontWeight = 'bold';
+        info.style.marginBottom = '5px';
+        menu.appendChild(info);
 
-        // Determine current terrain
+        // Determine current terrain (use first selected as reference)
+        const firstKey = this.selectedHexes.values().next().value;
+        const [q, r] = firstKey.split(',').map(Number);
+
         let currentType = 'water'; // Default
-        const obstacle = this.levelData.obstacles.find(o => o.q === hex.q && o.r === hex.r);
+        const obstacle = this.levelData.obstacles.find(o => o.q === q && o.r === r);
         if (obstacle) {
             currentType = obstacle.type;
         } else {
-            const tile = this.levelData.tiles.find(t => t.q === hex.q && t.r === hex.r);
+            const tile = this.levelData.tiles.find(t => t.q === q && t.r === r);
             if (tile) currentType = tile.type;
         }
 
@@ -555,29 +605,44 @@ export default class BuilderScene extends Phaser.Scene {
             terrainSelect.appendChild(opt);
         });
         terrainSelect.onchange = (e) => {
-            this.setTerrain(hex, e.target.value);
+            this.setTerrain(e.target.value);
             document.body.removeChild(menu);
         };
         menu.appendChild(terrainSelect);
 
         // Actions
-        this.createMenuButton(menu, 'Set Start', () => {
-            this.levelData.endpoints.start = { q: hex.q, r: hex.r };
-            this.updatePath();
-            document.body.removeChild(menu);
-        });
+        if (this.selectedHexes.size === 1) {
+            const [q, r] = this.selectedHexes.values().next().value.split(',').map(Number);
 
-        this.createMenuButton(menu, 'Set End', () => {
-            this.levelData.endpoints.end = { q: hex.q, r: hex.r };
-            this.updatePath();
-            document.body.removeChild(menu);
-        });
+            this.createMenuButton(menu, 'Set Start', () => {
+                this.levelData.endpoints.start = { q, r };
+                this.updatePath();
+                document.body.removeChild(menu);
+            });
 
-        this.createMenuButton(menu, 'Add Waypoint', () => {
-            this.levelData.waypoints.push({ q: hex.q, r: hex.r });
-            this.updatePath();
-            document.body.removeChild(menu);
-        });
+            this.createMenuButton(menu, 'Set End', () => {
+                this.levelData.endpoints.end = { q, r };
+                this.updatePath();
+                document.body.removeChild(menu);
+            });
+
+            // Check if it's already a waypoint
+            const waypointIndex = this.levelData.waypoints.findIndex(w => w.q === q && w.r === r);
+
+            if (waypointIndex === -1) {
+                this.createMenuButton(menu, 'Add Waypoint', () => {
+                    this.levelData.waypoints.push({ q, r });
+                    this.updatePath();
+                    document.body.removeChild(menu);
+                });
+            } else {
+                this.createMenuButton(menu, 'Remove Waypoint', () => {
+                    this.levelData.waypoints.splice(waypointIndex, 1);
+                    this.updatePath();
+                    document.body.removeChild(menu);
+                });
+            }
+        }
 
         this.createMenuButton(menu, 'Close', () => {
             document.body.removeChild(menu);
@@ -596,17 +661,22 @@ export default class BuilderScene extends Phaser.Scene {
         parent.appendChild(btn);
     }
 
-    setTerrain(hex, type) {
-        // Remove existing tile at this hex
-        this.levelData.tiles = this.levelData.tiles.filter(t => t.q !== hex.q || t.r !== hex.r);
-        this.levelData.obstacles = this.levelData.obstacles.filter(o => o.q !== hex.q || o.r !== hex.r);
+    setTerrain(type) {
+        // Batch update: Filter out all selected hexes from existing arrays first
+        this.levelData.tiles = this.levelData.tiles.filter(t => !this.selectedHexes.has(`${t.q},${t.r}`));
+        this.levelData.obstacles = this.levelData.obstacles.filter(o => !this.selectedHexes.has(`${o.q},${o.r}`));
 
-        if (type === 'rock' || type === 'tree') {
-            this.levelData.tiles.push({ q: hex.q, r: hex.r, type: 'grass' }); // Obstacles sit on grass
-            this.levelData.obstacles.push({ q: hex.q, r: hex.r, type: type });
-        } else {
-            this.levelData.tiles.push({ q: hex.q, r: hex.r, type: type });
-        }
+        // Add new tiles/obstacles for all selected hexes
+        this.selectedHexes.forEach(key => {
+            const [q, r] = key.split(',').map(Number);
+
+            if (type === 'rock' || type === 'tree') {
+                this.levelData.tiles.push({ q, r, type: 'grass' }); // Obstacles sit on grass
+                this.levelData.obstacles.push({ q, r, type: type });
+            } else {
+                this.levelData.tiles.push({ q, r, type: type });
+            }
+        });
 
         this.hexGrid.draw();
         this.updatePath();
@@ -670,9 +740,12 @@ export default class BuilderScene extends Phaser.Scene {
             for (const neighbor of neighbors) {
                 if (!this.isWalkable(neighbor)) continue;
 
-                const tentativeGScore = (gScore.get(key(current)) || Infinity) + 1; // Cost is 1 for now
+                const currentG = gScore.get(key(current));
+                const tentativeGScore = (currentG !== undefined ? currentG : Infinity) + 1; // Cost is 1 for now
+                const neighborG = gScore.get(key(neighbor));
+                const neighborGVal = neighborG !== undefined ? neighborG : Infinity;
 
-                if (tentativeGScore < (gScore.get(key(neighbor)) || Infinity)) {
+                if (tentativeGScore < neighborGVal) {
                     cameFrom.set(key(neighbor), current);
                     gScore.set(key(neighbor), tentativeGScore);
                     fScore.set(key(neighbor), tentativeGScore + this.heuristic(neighbor, end));
@@ -726,4 +799,48 @@ export default class BuilderScene extends Phaser.Scene {
 
     // Removed loadLevel method as it is replaced by selectLevel logic
 
+    analyzeLevel() {
+        if (!this.levelData || !this.hexGrid) return;
+
+        // Calculate path length in pixels
+        const pathPixels = this.hexGrid.getPixelPath();
+        if (pathPixels.length < 2) {
+            alert('No valid path found!');
+            return;
+        }
+
+        // Calculate total distance
+        let totalDistance = 0;
+        for (let i = 0; i < pathPixels.length - 1; i++) {
+            const p1 = pathPixels[i];
+            const p2 = pathPixels[i + 1];
+            totalDistance += Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y);
+        }
+
+        const enemyConfig = this.cache.json.get('enemies');
+        const towerConfig = this.cache.json.get('towers');
+
+        const result = LevelBalancer.calculateDifficulty(this.levelData, enemyConfig, towerConfig, totalDistance);
+
+        // Display Result
+        this.analysisResult.style.display = 'block';
+        let color = '#fff';
+        if (result.rating === 'Impossible') color = '#f44';
+        else if (result.rating === 'Hard') color = '#fa4';
+        else if (result.rating === 'Medium') color = '#ff4';
+        else if (result.rating === 'Easy') color = '#4f4';
+
+        this.analysisResult.innerHTML = `
+            <div style="font-weight:bold; color:${color}; margin-bottom:5px;">Rating: ${result.rating}</div>
+            <div>Score: ${result.score.toFixed(2)}</div>
+            <div>Best Tower: ${result.bestTower}</div>
+            <div style="margin-top:5px; max-height:100px; overflow-y:auto;">
+                ${result.details.map(d => `
+                    <div style="border-bottom:1px solid #444; padding:2px;">
+                        ${d.wave}: ${d.score} (HP: ${d.health})
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
 }
